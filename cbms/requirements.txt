@@ -1,0 +1,47 @@
+pip install django
+
+
+setup in orm like this, located at settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL
+        'NAME': 'ptcao',  # Your database name
+        'USER': 'postgres',
+        'PASSWORD': '177680',  # Your password (consider using environment variables)
+        'HOST': 'localhost',  # Database server
+        'PORT': '5432',  # Default PostgreSQL port
+    }
+}
+
+if using vscode download extension sql tools :>
+
+
+ivan
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL
+        'NAME': 'cbmms',  # Your database name
+        'USER': 'ivan',
+        'PASSWORD': 'caringal20',  # Your password (consider using environment variables)
+        'HOST': 'localhost',  # Database server
+        'PORT': '5432',  # Default PostgreSQL port
+        
+    }
+}
+
+jo
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # Use PostgreSQL
+        'NAME': 'test1',  # Your database name
+        'USER': 'ivan',
+        'PASSWORD': 'caringal20',  # Your password (consider using environment variables)
+        'HOST': 'localhost',  # Database server
+        'PORT': '5432',  # Default PostgreSQL port
+        
+    }
+}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+  </head>
+
+
+  <body>
+    {%  if request.user.is_authenticated or request.path == "/login/" or request.path == "/register/" %}
+    <h1>Hello, postgre! 4th commit</h1>
+    <div class="container">
+      {% for x in obj %}
+      <div class="row">
+        <div class="col-lg-5 col-md-5 col-12">
+          {{ x.name }}
+        </div>
+        <div class="col-lg-5 col-md-5 col-12">
+          {{ x.des }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}    
+    <p>Dont have an acc? <a href="/register/">heree</a></p>
+    <p>have an acc? <a href="/loginBarangay/">here</a></p>
+  {% endif %}
+  <form id="logout-form" method="post" action="/logout/">
+        {% csrf_token %}
+            <button type="submit" class="btn btn-success">logout</button> 
+  </form>
+  </body>
+
+</html>
+
+
+
+
+
+
+
+

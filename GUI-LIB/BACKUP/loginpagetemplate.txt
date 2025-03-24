@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="images/mabinilogo.png" />
+    <title>Free E-Book | Start Your Own Blog</title>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="images/mabinilogo.png" alt="Logo" width="48" height="48" />
+          <span class="fw-semibold">Welcome to CBMMS 2.0</span>
+        </a> 
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Login</a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+      <!-- Hero -->
+      <div class="hero text-white pt-7">
+        <!-- Purpose of container-xl is for sizing. It stays 100% width until below xl, then collapses -->
+        <div class="container-xl border border-success">
+          <div class="row">
+            <div class="col-md-6 border border-dark">
+              <!-- Card overlay -->
+              <div class="card card-overlay rounded-5 shadow-lg border-0 p-3 center" style="width: 450px; height: 600px;">
+                <div class="card-body border border-dark">
+                  <h1 class="text-start text-dark">Sign in</h1>
+                  <hr class="my-4 border-dark" style="border-width: 3px;">
+                  <p class="text-start text-secondary">Barangay Officials</p>
+                  
+                  <p class="text-start text-dark">Please enter your credentials to sign in</p>
+                  <form>
+                    <div class="mb-3">
+                      <label for="email" class="form-label mb-3 text-dark">Email</label>
+                      <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-1">
+                      <label for="password" class="form-label mb-3 text-dark">Password</label>
+                      <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="d-flex justify-content-between p-2">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                          <a href="#login-form" class="nav-link" style="color: blue; display: inline;">Remember Me</a>
+                        </label>
+                      </div>
+                      <a href="#login-form" class="nav-link" style="color: blue;">Forgot Password</a>
+                    </div>
+                    
+                    <div class="d-grid">
+                      <button type="submit" class="btn btn-primary rounded-5 mt-3">Login</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-end border border-dark">
+              <!-- Start -->
+              <section class="w-100">
+                <div class="textbox text-start">
+                  <h1 class="text-dark " style="font-weight: 400;">Community-Based Monitoring<br>and <span class="text-secondary fw-bold">Mapping System</span></h1>
+                  <p class="text-dark">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                  <a href="https://www.starbucks.ph/" aria-label="Learn more about Starbucks">Learn more</a>
+                </div>
+              </section>
+              <!-- End -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>
+

@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}  CBMMS 2.0 - File Report {% endblock %}
+{% block content %}
+
+{% load static %}
+<!-- <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> -->
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+<style>
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+    #sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #0d6efd;
+        color: white;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #sidebar.collapsed {
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .sidebar-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        padding-left: 30px; 
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+        background: white;
+        color: #0d6efd;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .sidebar-item i {
+        margin-right: 10px;
+    }
+    #sidebar.collapsed .sidebar-item span {
+        display: none;
+    }
+    #logo {
+        width: 100px;
+        margin: 20px 0;
+        transition: all 0.3s;
+        padding-top: 50px;
+    }
+    #sidebar.collapsed #logo {
+        width: 50px;
+    }
+    #toggleSidebar {
+        position: absolute;
+        right: 5px;
+        color: white;
+        background-color: #0d6efd;
+        border: none;
+    }
+    #homeIcon {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        padding-left: 20px;
+    }
+    #content {
+        flex-grow: 1;
+        padding: 80px;
+        overflow-y: auto;
+        height: 100vh;
+        position: relative;
+    }
+    .map-container {
+        width: 100%;
+        max-width: 100%; 
+        height: 400px; 
+        background-color: #3B82F6; 
+        padding: 15px;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        margin-top: 20px;
+        padding-bottom: 50px;
+    }
+
+   
+    #map {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+    }
+
+  
+    .map-buttons {
+        display: flex;
+        justify-content: space-between;
+        width: 70%;
+        position: absolute;
+        bottom: 15px;
+    }
+
+    .map-buttons button {
+        background: white;
+        border: none;
+        padding: 10px;
+        font-size: 18px;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .map-buttons button:active {
+        background: #ddd;
+    }
+    .form-control, .form-select {
+        border-radius: 10px;
+    }
+    .btn-primary {
+        width: 20%;
+        border-radius: 40px;
+    }
+
+    .btn-custom {
+        min-width: 200px; /* Ensures the button is wide enough */
+        white-space: nowrap; /* Prevents text from breaking */
+    }
+
+    .btn-custom:hover {
+        color: white !important;
+    }
+    
+    .form-label {
+        margin-top: 20px; 
+    }
+    .reporter {
+        margin-right: 600px;
+    }
+    .lefty{
+        margin-left: 100px;
+    }
+    .custom-input3 {
+        width: 50%; 
+        height: 40px; 
+    }
+    .custom-input4 {
+        width: 20%; 
+        height: 40px; 
+    }
+    .custom-input5 {
+        width: 50%; 
+        height: 40px; 
+    }
+    .custom-input6 {
+        width: 15%; 
+        height: 40px; 
+    }
+
+    #map {
+        width: 100%;  /* Full width of its container */
+        height: 400px; /* Adjust height as needed */
+        border-radius: 10px; /* Optional: rounded corners */
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Optional: shadow */
+    }
+
+    @media (max-width: 768px) {
+        #map {
+            height: 300px; /* Reduce height for smaller screens */
+        }
+    }
+
+
+</style>
+
+<div id="sidebar" class="d-flex flex-column">
+    <a href="/Barangaylandingpage" id="homeIcon" class="bi bi-house-door"></a>
+    <button class="btn btn-light m-3" id="toggleSidebar">☰</button>
+    <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" id="logo">
+    <a href="/BarangayDashboard" class="sidebar-item"> <i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+    <a href="/barangay_file_report_view" class="sidebar-item active"> <i class="bi bi-file-earmark-text"></i> <span>File Report</span></a>
+    <a href="/barangay_details_view" class="sidebar-item"> <i class="bi bi-building"></i> <span>Barangay Details</span></a>
+    <a href="/BarangayReportLog" class="sidebar-item"> <i class="bi bi-journal-text"></i> <span>Report Log</span></a>
+</div>
+
+<div id="content">
+    <h2>Filing Report</h2>
+    <p>
+        <span class="reporter d-block">Reporter Name: {{ user.username }}!</span>
+        
+        <span class="d-block">Barangay #: {{ user.barangay }}</span>
+    </p>
+
+    <form id="filingReportForm" method="POST">
+        {% csrf_token %}
+        <div class="row mt-4">
+            <div class="col-lg-8 col-md-7 col-sm-12">
+                <label class="form-label">Enter Full Name of Resident</label>
+                <input type="text" class="form-control custom-input3 w-100" placeholder="Full name" name="residentName" required>
+
+                <label class="form-label mt-3">Barangay Street</label>
+                <input type="text" class="form-control custom-input3 w-100" placeholder="Enter Barangay Street" name="barangayStreet" required>
+
+                <label class="form-label mt-3">Severity Level</label>
+                <select class="form-select custom-input4 w-100" name="severityLevel" required>
+                    <option value="" disabled selected>Select Severity Level</option>
+                    <option value="Informational">Informational</option>
+                    <option value="Minor">Minor</option>
+                    <option value="Major">Major</option>
+                    <option value="Critical">Critical</option>
+                </select>
+
+                <div class="row mt-3">
+                    <div class="col-md-4 col-sm-12">
+                        <label class="form-label">Select Year</label>
+                        <select class="form-select custom-input5 w-100" name="incidentYear" required>
+                            <option value="" disabled selected>Select Year</option>
+                            <option>2024</option>
+                            <option>2025</option>
+                            <option>2026</option>
+                            <option>2027</option>
+                            <option>2028</option>
+                            <option>2029</option>
+                            <option>2030</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-sm-12 mt-sm-2 mt-md-0">
+                        <label class="form-label">Select Month</label>
+                        <select class="form-select custom-input5 w-100" name="incidentMonth" required>
+                            <option value="" disabled selected>Select Month</option>
+                            <option>January</option>
+                            <option>February</option>
+                            <option>March</option>
+                            <option>April</option>
+                            <option>May</option>
+                            <option>June</option>
+                            <option>July</option>
+                            <option>August</option>
+                            <option>September</option>
+                            <option>October</option>
+                            <option>November</option>
+                            <option>December</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-sm-12 mt-sm-2 mt-md-0">
+                        <label class="form-label">Select Day</label>
+                        <select class="form-select custom-input5 w-100" name="incidentDay" required>
+                            <option value="" disabled selected>Select Day</option>
+                            <script>
+                                for (let i = 1; i <= 31; i++) {
+                                    document.write(`<option>${i}</option>`);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="form-label mt-3">Select Time</label>
+                <input type="time" class="form-control custom-input6 w-100" name="incidentTime" required>
+
+                <!-- Incident Type moved above Description -->
+                <label class="form-label mt-3">Incident Type</label>
+                <textarea class="form-control w-100" placeholder="Enter Incident Type" name="incidentType"></textarea>
+
+                <label class="form-label mt-3">Description</label>
+                <textarea class="form-control w-100" placeholder="Enter Description" name="incidentDescription" required></textarea>
+
+                <label class="form-label mt-3">Attachments</label>
+                <input type="file" class="form-control custom-input5 w-100" name="attachments">
+
+                <!-- Input Fields to Display Latitude & Longitude -->
+                <div class="d-none">
+                    <label for="latitude">Latitude:</label>
+                    <input type="text" id="latitude" class="form-control w-100" name="latitude" readonly>
+                
+                    <label for="longitude">Longitude:</label>
+                    <input type="text" id="longitude" class="form-control w-100" name="longitude" readonly>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-5 col-sm-12 mt-4 mt-md-0">
+                <div class="map-container w-100">
+                    <div id="map"></div>
+
+                    <div class="map-buttons">
+                        <button type="button" onclick="enableAddPin()">➕</button>
+                        <button type="button" onclick="enableRemovePin()">➖</button>
+                        <button type="button" onclick="resetMap()">✏️</button>
+                    </div>
+                </div>
+
+                <script>
+                    let map = L.map('map').setView([13.7512, 120.9276], 13);
+                    let markers = [];  // Store added markers
+                    let addPinMode = false;
+                
+                    // Add OpenStreetMap tiles
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }).addTo(map);
+                
+                    // Enable Adding Pins
+                    function enableAddPin() {
+                        addPinMode = true;
+                        map.on('click', addMarker);
+                    }
+                
+                    // Function to Add Marker on Click
+                    function addMarker(e) {
+                        if (addPinMode) {
+                            let lat = e.latlng.lat;
+                            let lng = e.latlng.lng;
+
+                            // Update input fields with coordinates
+                            document.getElementById("latitude").value = lat;
+                            document.getElementById("longitude").value = lng;
+
+                            let marker = L.marker([lat, lng]).addTo(map)
+                                .bindPopup(`Lat: ${lat}, Lng: ${lng}`)
+                                .openPopup();
+
+                            markers.push(marker);
+
+                            // Save to Django (send to backend)
+                            fetch('/save-pin/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCSRFToken()
+                                },
+                                body: JSON.stringify({ latitude: lat, longitude: lng })
+                            }).then(response => response.json())
+                            .then(data => console.log("Response:", data));
+
+                            addPinMode = false; // Disable add mode after clicking
+                            map.off('click', addMarker);
+                        }
+                    }
+
+                
+                    // Enable Removing Pins
+                    function enableRemovePin() {
+                        markers.forEach(marker => map.removeLayer(marker));
+                        markers = [];
+                    }
+                
+                    // Reset Map View
+                    function resetMap() {
+                        map.setView([13.7512, 120.9276], 13);
+                        enableRemovePin();
+                    }
+                
+                    // Get CSRF Token for Django POST request
+                    function getCSRFToken() {
+                        return document.cookie.split('; ')
+                            .find(row => row.startsWith('csrftoken='))
+                            ?.split('=')[1];
+                    }
+                </script>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            <button type="submit" class="btn btn-primary btn-custom text-center">Submit Report</button>
+        </div>   
+           
+    </form>
+</div>
+
+
+
+<script>
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+        let sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+
+        let toggleButton = document.getElementById('toggleSidebar');
+        if (sidebar.classList.contains('collapsed')) {
+            toggleButton.style.right = '-8px';  // Moves burger when collapsed
+        } else {
+            toggleButton.style.right = '-10px';  // Moves burger when expanded
+        }
+    });
+</script>
+
+{% endblock %}

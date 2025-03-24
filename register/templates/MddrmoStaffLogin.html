@@ -1,0 +1,228 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="icon" href="{% static 'images/mabinilogo.png' %}" />
+    <title>MDRRMO STAFF</title>
+
+    <style>
+              .navbar .btn-outline-light:hover {
+            color: #000000; /* Replace #000000 with any valid color code */
+        }
+        body {
+          position: relative; /* Ensure body acts as the parent */
+          background: url("{% static 'images/MdrmmoLastedit.png' %}") center top no-repeat;
+          background-size: 100% 60%;
+          min-height: 60%; /* Ensure body takes the full viewport height */
+          margin: 0;
+           padding: 0;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%; /* Same as background size */
+            background: rgba(0, 0, 0, 0.3); /* Adjust opacity and color */
+            z-index: 0; /* Keep it above the background but below content */
+        }
+
+
+
+        @media (max-width: 768px) {
+          body {
+            background-size: 100% 50vh;
+          }
+
+          .card-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90%; /* Adjusts width for smaller screens */
+            margin: 0 auto; /* Centers the card */
+          }
+          .nav-link{
+          color: #000; /* Sets text color to dark */
+          background-color: #f0f0f0; /* Light gray background */
+          padding: 5px 10px; /* Adds some padding for better appearance */
+          border-radius: 4px; /* Rounds the corners slightly */
+
+          }
+        }
+
+        .card-overlay {
+          max-width: 100%;
+          width: 100%;
+        }
+
+        .card {
+          width: 100%;
+        }
+
+        .navbar {
+          width: 100%;
+        }
+
+        .card .card-body {
+          width: 100%;
+          padding: 20px;
+        }
+        .custom-alert {
+          padding: 0px !important;
+          margin: 0px 0 !important;
+        }
+
+        .custom-alert p {
+          margin: 0 !important;  /* Removes any extra margin on <p> */
+          padding: 0 !important;
+        }
+        .btn-primary:hover {
+          color: #f8f9fa !important; /* Light color on hover */
+        }
+
+        
+        
+
+
+
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg  navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" width="48" height="48" />
+          <span class="fw-semibold">Welcome to CBMMS 2.0</span>
+        </a> 
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link fw-semibold " href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link fw-semibold" href="about.html">About Us</a> -->
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link fw-semibold" href="about.html">Features</a> -->
+            </li>
+            <li class="nav-item">
+              <!-- <a class="nav-link fw-semibold" href="about.html">Contact</a> -->
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Login</a>
+            </li>
+            
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+      <!-- Hero -->
+      <div class="hero text-white pt-5">
+        <!-- Purpose of container-xl is for sizing. It stays 100% width until below xl, then collapses -->
+        <div class="container-xl border border-success">
+          <div class="row">
+            <div class="col-md-5 border border-danger mb-5">
+              <!-- Card overlay -->
+              <div class="card card-overlay rounded-5 shadow-lg border-0 p-3 center" style="width: 450px; height: 580px;">
+                <div class="card-body ">
+                  <h1 class="text-start text-dark">Sign in</h1>
+                  <hr class="my-4 border-dark" style="border-width: 3px;">
+                  <p class="text-start text-secondary">MDRRM Officials</p>
+                  
+                  <p class="text-start text-dark">Please enter your credentials to sign in.</p>
+                  <!-- Display messages if any -->
+                  {% if messages %}
+                    <div class="alert alert-warning custom-alert">
+                      {% for message in messages %}
+                        <p class="m-0 p-0" >{{ message }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                  <form method="POST" class="form-group ">
+                      {% csrf_token %}
+
+                      <div class="mb-0">
+                          <label for="{{ form.username.id_for_label }}" class="form-label mt-0 text-dark">Username</label>
+                          {{ form.username }}
+                          {% if form.username.errors %}
+                              <div class="text-danger">{{ form.username.errors.0 }}</div>
+                          {% endif %}
+                          <small class="mb-0 text-muted d-block">{{ form.username.help_text }}</small>
+                      </div>
+
+                      <div class="mb-3">
+                          <label for="{{ form.username.id_for_label }}" class="form-label mt-0 text-dark">Password</label>
+                          {{ form.password }}
+                          {% if form.password.errors %}
+                              <div class="text-danger">{{ form.password.errors.0 }}</div>
+                          {% endif %}
+                          <small class="mb-1 text-muted d-block">{{ form.password.help_text }}</small>
+                      </div>
+
+
+                      
+                      <div class="d-flex justify-content-between p-0 m-0">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="rememberMe">
+                          <label class="form-check-label" for="rememberMe">
+                            <a href="#login-form" class="nav-link" style="color: blue; display: inline;"><small>Remember Me</small></a>
+                          </label>
+                        </div>
+                        <a href="#login-form" class="nav-link" style="color: blue;"><small>Forgot Password</small></a>
+                      </div>
+
+
+                      
+
+                      <div class="d-grid">
+                          <button type="submit" class="btn btn-primary rounded-5 mt-1">Login</button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-7 d-flex align-items-end mb-5">
+              <!-- Start -->
+              <section class="w-100">
+                <div class="textbox text-start">
+                  <h1 class="text-dark " style="font-weight: 400;">Community-Based Monitoring<br>and <span class="text-secondary fw-bold">Mapping System</span></h1>
+                  <p class="text-dark">A tool designed to empower Mabini by enabling real-time data collection, analysis, and visualization of key environmental, social, or infrastructural changes. It enhances decision-making, promotes transparency, and fosters community engagement.  </p>
+                  <!-- <a href="https://www.starbucks.ph/" aria-label="Learn more about Starbucks">Learn more</a> -->
+                </div>
+              </section>
+              <!-- End -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>

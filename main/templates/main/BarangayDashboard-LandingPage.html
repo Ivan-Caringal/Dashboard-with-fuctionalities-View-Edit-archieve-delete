@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %} Barangay Staff - Landing Page {% endblock %}
+{% block content %}
+
+{% load static %}
+<style>
+    /* Background Image with Overlay */
+    body {
+        background-image: url("{% static 'images/newpio.png' %}");
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-size: 100% 60%;
+        min-height: 100vh; /* Full height */
+        margin: 0;
+        margin-bottom: 40px;
+    }
+
+    /* Navbar */
+    .navbar {
+        width: 100%;
+        position: relative;
+    }
+    
+    .navbar-toggler {
+        position: absolute;
+        right: 20px;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 50vh;
+        color: white;
+    }
+
+    .header img {
+        width: 100px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .header .welcome-text {
+        font-size: 35px;
+        font-weight: 600;
+        color: white;
+        margin: 5px 0;
+    }
+
+    .header h1 {
+        font-weight: 700;
+        font-size: 60px;
+    }
+
+    /* Icons Section */
+    .icon-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        padding: 10px 0;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    .icon-box {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        transition: 0.3s;
+    }
+
+    .icon-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .icon-box i {
+        color: #007bff;
+        font-size: 50px; /* Increase font size */
+    }
+
+    .icon-box p {
+        font-size: 20px; 
+    }
+
+    .icon-link {
+        text-decoration: none;
+        color: inherit;        
+        display: inline-block;
+    }
+
+    /* Footer */
+    .footer {
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        margin-top: 20px; /* Adjust as needed */
+    }
+
+    @media (max-width: 768px) {
+        body {
+            background-size: cover; /* Ensures better scaling */
+            min-height: 100vh;
+        }
+
+        .icon-section {
+            flex-direction: column;
+            align-items: center;
+            
+        }
+    }
+</style>
+
+<nav class="navbar navbar-dark navbar-transparent">
+    <div class="container d-flex justify-content-spacebetween">
+        <h4 class="text-white fs-5">Welcome, {{ user.username }}!</h4>
+        
+        <!-- Dropdown for mobile -->
+        <div class="dropdown d-lg-none">
+            <button class="navbar-toggler" type="button" data-bs-toggle="dropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <div class="dp-item m-0 p-0 ms-1">
+                    <li><a class="dropdown-item mb-2" href="#">Profile</a></li> <!-- Added mb-2 -->
+                </div>
+                <div class="dp-item m-0 p-0 ms-3">
+                    <form id="logout-form" method="post" action="/logout/">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item btn btn-link" style="border: none; background: none; padding: 0; width: 100%; text-align: left;">
+                            Log Out
+                        </button>
+                    </form>
+                </div>
+            </ul>
+        </div>
+  
+        <!-- Normal navbar for large screens -->
+        <div class="d-none d-lg-block">
+            <ul class="navbar-nav ms-auto d-flex flex-row">
+                <li class="nav-item me-3"> <!-- Added me-3 -->
+                    <a class="nav-link" href="#">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <form id="logout-form" method="post" action="/logout/">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; ">
+                            Log Out
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Header -->
+<header class="header">
+    <img src="{% static 'images/mabinilogo.png' %}" alt="Logo">
+    <p class="welcome-text">Welcome to</p>
+    <h1>CBMMS 2.0</h1>
+</header>
+
+<!-- Icons Section -->
+<section class="icon-section">
+    <a href="/BarangayDashboard" class="icon-link">
+        <div class="icon-box">
+            <i class="bi bi-speedometer2"></i>
+            <p>Dashboard</p>
+        </div>
+    </a>        
+    
+    <a href="/barangay_file_report_view" class="icon-link">
+        <div class="icon-box">
+            <i class="bi bi-file-earmark-text"></i>
+            <p>File Report</p>
+        </div>
+    </a>
+    
+    <a href="/barangay_details_view" class="icon-link">
+        <div class="icon-box">
+            <i class="bi bi-building"></i>
+            <p>Barangay Details</p>
+        </div>
+    </a>
+    
+    <a href="/BarangayReportLog" class="icon-link">
+        <div class="icon-box">
+            <i class="bi bi-journal-text"></i>
+            <p>Report Log</p>
+        </div>
+    </a>
+</section>
+
+
+
+<!-- Footer -->
+<footer class="footer">
+    <p>mabinibat.pio@gmail.com | @mabinipio</p>
+</footer>
+
+<script>
+    function confirmLogout() {
+        return confirm("Are you sure you want to log out?");
+    }
+</script>
+
+{% endblock %}

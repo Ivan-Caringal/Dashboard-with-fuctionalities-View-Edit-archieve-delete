@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %} CBMMS 2.0 - Rerports {% endblock %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+    #sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #0d6efd;
+        color: white;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #sidebar.collapsed {
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .sidebar-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        padding-left: 30px;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+        background: white;
+        color: #0d6efd;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .sidebar-item i {
+        margin-right: 10px;
+    }
+    #sidebar.collapsed .sidebar-item span {
+        display: none;
+    }
+    #logo {
+        width: 100px;
+        margin: 20px 0;
+        transition: all 0.3s;
+        padding-top: 50px;
+    }
+    #sidebar.collapsed #logo {
+        width: 50px;
+    }
+    #toggleSidebar {
+        position: absolute;
+        right: 5px;
+        color: white;
+        background-color: #0d6efd;
+        border: none;
+    }
+    #homeIcon {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        padding-left: 20px;
+    }
+    #content {
+        flex-grow: 1;
+        padding: 80px;
+        overflow-y: auto;
+        height: 100vh;
+        position: relative;
+    }
+    #map {
+        width: 100%;
+        max-width: 1100px;
+        height: 400px;
+        margin: auto;
+        border-radius: 10px;
+    }
+
+    .btn-stack {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .tab-content {
+        margin-top: 20px;
+    }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .overlay-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+        box-shadow: 0px 0px 10px #000;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+
+    .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    #reportList {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .report-item {
+        border: 1px solid black;
+        padding: 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .text-success {
+        color: green;
+    }
+    .text-danger {
+        color: red;
+    }
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto; /* Enable scrolling */
+    }
+    .overlay-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh; /* Limit height */
+        overflow-y: auto; /* Make content scrollable */
+    }
+    .approve-btn {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 10px;
+    }
+    .disapprove-btn {
+        background-color: #dc3545; /* Red */
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 10px;
+    }
+
+    .approve-btn:hover, .disapprove-btn:hover {
+        opacity: 0.8;
+    }
+    .report-details {
+        text-align: left;
+    }
+
+    #map-container {
+        width: 100%;
+        height: 300px;
+        margin-top: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div id="sidebar" class="d-flex flex-column">
+    <a href="{% url 'mdrrmolandingpage' %}" id="homeIcon" class="bi bi-house-door"></a>
+    <button class="btn btn-light m-3" id="toggleSidebar">☰</button>
+    <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" id="logo">
+    <a href="#" class="sidebar-item"> <i class="bi bi-house-door"></i> <span>Dashboard</span></a>
+    <a href="#" class="sidebar-item"> <i class="bi bi-clipboard-data"></i> <span>Monitoring</span></a>
+    <a href="#" class="sidebar-item"> <i class="bi bi-map"></i> <span>GIS Map</span></a>
+    <a href="{% url 'cms' %}" class="sidebar-item"> <i class="bi bi-file-earmark-richtext"></i> <span>CMS</span></a>
+    <a href="{% url 'report' %}" class="sidebar-item active"> <i class="bi bi-graph-up-arrow"></i> <span>Reports</span></a>
+</div>
+
+<div id="content">
+    <h1>Reports</h1>
+
+    <!-- Report List -->
+    <div id="reportList">
+        {% for reportLogStaff in reportLogStaffs %}
+        <a href="{% url 'report_detail' reportLogStaff.id %}" class="report-item" 
+           data-id="{{ reportLogStaff.id }}" 
+           data-status="{{ reportLogStaff.approval_status }}">
+            File report [ <strong>ID: {{ reportLogStaff.id }}</strong> ] 
+            <input type="hidden" name="singlereport_id" value="{{ reportLogStaff.id }}">
+            <span class="text-success">{{ reportLogStaff.approval_status }}.</span>
+            <span class="date">{{ reportLogStaff.incident_day }}, {{ reportLogStaff.incident_month }}, {{ reportLogStaff.incident_year }}</span> 
+            <span class="time">{{ reportLogStaff.incident_time }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
+
+<!-- Bootstrap Bundle with Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+
+
+{% endblock %}

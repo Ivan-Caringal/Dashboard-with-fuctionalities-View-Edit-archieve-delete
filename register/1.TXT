@@ -1,0 +1,130 @@
+PROCESS
+
+CREAATE FORMSSS CUSTOM FORMSSS
+
+THEN WHEN YOU CREATED THE FORMS YOU NEED TO CREATE MODELS TO DISPLAY THE DATA IN THE FORMS 
+-MAKEMIGRATIONS
+-MIGRATE
+
+THEN MODIFY THE ADMIN.PY TO SHOW IN ADMIN DASHBOARD
+
+
+ONCE THE DATA IS READY 
+
+GO TO VIES .PY TO HANDLE THE LOGIC
+
+
+------MORE INFO--------
+VIEWS.OY IS WHERE YOU HANDLE ALL THE LOGIC FROM FRONT END
+FORMS.PY IS WHERE YOU HANDLE THE LOGIC IN BACKEND SO YOU WILL JUST CALL IT IN VIES.PY
+
+Documentation: User Authentication and Management System
+Introduction
+This documentation explains how the user authentication system works, detailing the role of each component, including models, views, and forms. The system is built using Django’s authentication framework with custom modifications to support different user roles and approval statuses.
+
+1. Models (models.py)
+Purpose:
+Defines the database structure for user authentication and management.
+
+
+
+How It Works:
+The CustomUser model extends Django’s AbstractUser, inheriting built-in authentication fields such as username, password, and email.
+Additional fields are added to store more user-specific data:
+name: Stores the full name of the user.
+mobile: Stores the user’s phone number.
+barangay: Represents the barangay the user is associated with.
+position: Specifies the user’s role within the barangay (e.g., Secretary).
+barangayCode: A unique code assigned to each barangay for identification.
+approval_status: Determines whether a user’s account is pending, approved, or disapproved.
+role: Defines different types of users (barangay-staff, admin, mddrmo-staff).
+Key Functionalities:
+Choice Fields:
+
+approval_status uses predefined choices (Pending, Approved, Disapproved) to manage user approvals.
+role assigns different roles to users, affecting their permissions.
+String Representation (__str__ method):
+
+Returns the username of the user when the model instance is printed.
+Next Steps After Defining the Model:
+Run python manage.py makemigrations to generate a migration file.
+Run python manage.py migrate to apply changes to the database.
+Add the model to admin.py so that it appears in the Django admin panel.
+
+
+2. Views (views.py)
+Purpose:
+Handles user requests, processes authentication, and manages form submissions.
+
+How It Works:
+User Registration (register function)
+Handles GET requests:
+Displays an empty registration form when a user visits the registration page.
+Handles POST requests:
+Validates the form data.
+If valid, saves the new user to the database.
+Redirects the user to the login page upon successful registration.
+If invalid, re-renders the form with error messages.
+Barangay Staff Login (barangay_login function)
+Handles GET requests:
+Displays the barangay login form.
+Handles POST requests:
+Retrieves user credentials and validates them using CustomAuthenticationForm.
+If authentication is successful, logs in the user and redirects them to /home.
+If authentication fails, displays error messages and redirects to the login page again.
+MDDRMO Staff Login (mddrmostaff_login function)
+Similar to barangay_login but uses CustomAuthenticationFormMdrrmo to authenticate MDDRMO staff.
+If the credentials are valid, the user is logged in and redirected to /home.
+If authentication fails, error messages are displayed.
+Admin Login (CustomAdminLoginView class)
+Uses Django’s built-in LoginView with a custom authentication form (CustomAdminLoginForm).
+Redirects successfully logged-in admins to the Django admin panel (/admin).
+
+
+
+3. Forms (forms.py)
+Purpose:
+Handles form validation and authentication logic on the backend.
+
+How It Works:
+RegisterForm:
+
+Collects user details (name, mobile, barangay, etc.).
+Ensures required fields are filled.
+Saves new users to the database.
+CustomAuthenticationForm:
+
+Validates login credentials for barangay staff.
+CustomAuthenticationFormMdrrmo:
+
+Similar to CustomAuthenticationForm but designed for MDDRMO staff authentication.
+CustomAdminLoginForm:
+
+Handles authentication for admins logging into the Django admin panel.
+
+
+4. Admin Panel (admin.py)
+Purpose:
+Allows administrators to manage users through Django’s built-in admin dashboard.
+
+How It Works:
+Registers the CustomUser model to make it visible in the admin panel.
+Customizes how user data is displayed for better readability.
+
+
+5. Workflow Summary
+Creating Forms:
+
+Custom forms are defined in forms.py for registration and login.
+Defining Models:
+
+models.py contains the CustomUser model, which defines the structure of user accounts.
+Applying Migrations:
+
+makemigrations and migrate are run to apply database changes.
+Configuring Admin Panel:
+
+The CustomUser model is registered in admin.py to enable user management.
+Implementing Views:
+
+views.py manages form submissions and authentication logic.

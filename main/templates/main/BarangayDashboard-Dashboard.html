@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %} CBMMS 2.0 - Dashboard {% endblock %}
+{% block content %}
+
+{% load static %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.2/echarts.min.js"></script>
+<style>
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+    #sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #0d6efd;
+        color: white;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #sidebar.collapsed {
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .sidebar-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        padding-left: 30px;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+        background: white;
+        color: #0d6efd;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .sidebar-item i {
+        margin-right: 10px;
+    }
+    #sidebar.collapsed .sidebar-item span {
+        display: none;
+    }
+    #logo {
+        width: 100px;
+        margin: 20px 0;
+        transition: all 0.3s;
+        padding-top: 50px;
+    }
+    #sidebar.collapsed #logo {
+        width: 50px;
+    }
+    #toggleSidebar {
+        position: absolute;
+        right: 5px;
+        color: white;
+        background-color: #0d6efd;
+        border: none;
+    }
+    #homeIcon {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        padding-left: 20px;
+    }
+    #content {
+        flex-grow: 1;
+        padding: 80px;
+        overflow-y: auto;
+        height: 100vh;
+        position: relative;
+    }
+    #map {
+        width: 100%;
+        max-width: 1100px;
+        height: 400px;
+        margin: auto;
+        border-radius: 10px;
+    }
+    .chart-container {
+        width: 400px; /* Adjust width as needed */
+        height: 400px; /* Adjust height as needed */
+        margin: auto;
+        border: 2px solid #0d6efd; /* Adds a border */
+    }
+    #myPieChart {
+        width: 300px !important;
+        height: 300px !important;
+    }
+    
+</style>
+
+<div id="sidebar" class="d-flex flex-column">
+    <a href="/Barangaylandingpage" id="homeIcon" class="bi bi-house-door"></a>
+    <button class="btn btn-light m-3" id="toggleSidebar">☰</button>
+    <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" id="logo">
+    <a href="/BarangayDashboard" class="sidebar-item active"> <i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+    <a href="/barangay_file_report_view" class="sidebar-item"> <i class="bi bi-file-earmark-text"></i> <span>File Report</span></a>
+    <a href="/barangay_details_view" class="sidebar-item"> <i class="bi bi-building"></i> <span>Barangay Details</span></a>
+    <a href="/BarangayReportLog" class="sidebar-item"> <i class="bi bi-journal-text"></i> <span>Report Log</span></a>
+</div>
+
+<div id="content">
+    <h1>Dashboard</h1>
+    <div id="map"></div>
+
+    <div class="row mb-3">
+        <div class="col-auto">
+            <h5>Number of Residents: 50,858</h5>
+        </div>
+        <div class="col-auto ms-auto">
+            <h5>Number of Cases: 104</h5>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Street</th>
+                <th>Case</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reportLogDashboard in reportLogDashboards %}
+            <tr>
+                <td>{{ reportLogDashboard.resident_name }}</td>
+                <td>{{ reportLogDashboard.barangay_street }}</td>
+                <td>{{ reportLogDashboard.incident_type }}</td>
+                <td>{{ reportLogDashboard.approval_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 border d-flex justify-content-center align-items-center">
+                <canvas id="myPieChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="myBarChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="ageBarChart"></canvas>
+            </div>
+
+            <div class="col-md-6">
+               <div id="chart" style="width: 500px; height: 500px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Leaflet JS & Map Script -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+        let sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    });
+
+    var map = L.map('map').setView([13.7519, 120.9497], 14); // Mabini Municipality Approximate Coordinates
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    //this code below is for the marker
+    // L.marker([13.7519, 120.9497]).addTo(map)
+    //     .bindPopup('Mabini Municipality')
+    //     .openPopup();
+    {% for reportLogDashboard in reportLogDashboards %}
+        {% if reportLogDashboard.latitude and reportLogDashboard.longitude %}
+            L.marker([{{ reportLogDashboard.latitude }}, {{ reportLogDashboard.longitude }}]).addTo(map)
+            .bindPopup('Name: {{ reportLogDashboard.resident_name|escapejs }} <br> Incident Type: {{ reportLogDashboard.incident_type|escapejs }} <br> Date and time : {{ reportLogDashboard.incident_time|escapejs }} {{ reportLogDashboard.incident_day|escapejs }} {{ reportLogDashboard.incident_month|escapejs }} {{ reportLogDashboard.incident_year|escapejs }}');
+        {% endif %}
+    {% endfor %}
+
+</script>
+
+<script>
+    var chart = echarts.init(document.getElementById('chart'));
+
+    var option = {
+        series: [
+            {
+                type: 'pie',
+                data: [
+                    { value: 200, name: 'Male' },
+                    { value: 150, name: 'Female' }
+                ]
+            }
+        ]
+    };
+
+    chart.setOption(option);
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('myPieChart').getContext('2d');
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Male Population', 'Female Population'],
+                datasets: [{
+                    data: [{{ barangaydetailsLogDashboards.male_population }}, {{ barangaydetailsLogDashboards.female_population }}],
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                    hoverBackgroundColor: ['#FF4365', '#1E88E5']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('myBarChart').getContext('2d');
+
+        var myBarChart = new Chart(ctx, {
+            type: 'bar',  // Change to bar chart
+            data: {
+                labels: ['Male Population', 'Female Population'],  // X-axis labels
+                datasets: [{
+                    label: 'Population',
+                    data: [{{ barangaydetailsLogDashboards.male_population }}, {{ barangaydetailsLogDashboards.female_population }}],  // Data values
+                    backgroundColor: ['#FF6384', '#36A2EB'],  // Bar colors
+                    hoverBackgroundColor: ['#FF4365', '#1E88E5']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('ageBarChart').getContext('2d');
+
+        var ageLabels = ['0-5', '6-12', '13-17', '18-30', '31-45', '46-60', '60+'];
+        var ageData = [
+            {{ barangaydetailsLogDashboards.age_0_5 }},
+            {{ barangaydetailsLogDashboards.age_6_12 }},
+            {{ barangaydetailsLogDashboards.age_13_17 }},
+            {{ barangaydetailsLogDashboards.age_18_30 }},
+            {{ barangaydetailsLogDashboards.age_31_45 }},
+            {{ barangaydetailsLogDashboards.age_46_60 }},
+            {{ barangaydetailsLogDashboards.age_60_plus }}
+        ];
+
+        var ageBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ageLabels,
+                datasets: [{
+                    label: 'Age Group Distribution',
+                    data: ageData,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                onClick: function(evt, elements) {
+                    if (elements.length > 0) {
+                        var index = elements[0].index;
+                        var selectedAgeGroup = ageLabels[index];
+
+                        // Construct Django URL dynamically
+                        var url = "{% url 'BarangayReportLog' %}?age_group=" + encodeURIComponent(selectedAgeGroup);
+                        
+                        // Redirect to Django view
+                        window.location.href = url;
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+ 
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+
+{% block title %} CBMMS 2.0 - Barangay Details {% endblock %}
+{% block content %}
+
+{% load static %}
+<style>
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+    #sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #0d6efd;
+        color: white;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #sidebar.collapsed {
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .sidebar-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        padding-left: 30px;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+        background: white;
+        color: #0d6efd;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .sidebar-item i {
+        margin-right: 10px;
+    }
+    #sidebar.collapsed .sidebar-item span {
+        display: none;
+    }
+    #logo {
+        width: 100px;
+        margin: 20px 0;
+        transition: all 0.3s;
+        padding-top: 50px;
+    }
+    #sidebar.collapsed #logo {
+        width: 50px;
+    }
+    #toggleSidebar {
+        position: absolute;
+        right: 5px;
+        color: white;
+        background-color: #0d6efd;
+        border: none;
+    }
+    #homeIcon {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        padding-left: 20px;
+    }
+    #content {
+        flex-grow: 1;
+        padding: 80px;
+        overflow-y: auto;
+        height: 100vh;
+        position: relative;
+    }
+
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .btn-container {
+        width: 20%;
+        border-radius: 10px;
+        float: right;
+        margin-top: 20px;
+        margin-right: 150px;
+    }
+    .custom-margin{
+        margin-right: 50px;
+    }
+    .age-groups-container {
+        margin-left: -150px; 
+    }
+    .pwsnrowing{
+        margin-left: 45px;
+    }
+    .pregyrowing{
+        margin-left: 30px;
+    }
+    .custom-input {
+    width: 20%; 
+    height: 40px; 
+    }
+    .custom-input2 {
+    width: 75%; 
+    height: 40px; 
+    }
+    .custom-input3 {
+    width: 75%; 
+    height: 40px; 
+    }
+    .age-groups-container {
+        margin-left: -25px; /* Adjusted to shift slightly to the right */
+    }
+
+
+</style>
+
+    <div id="sidebar" class="d-flex flex-column">
+        <a href="/Barangaylandingpage" id="homeIcon" class="bi bi-house-door"></a>
+        <button class="btn btn-light m-3" id="toggleSidebar">☰</button>
+        
+
+        <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" id="logo">
+        <a href="/BarangayDashboard" class="sidebar-item"> <i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        <a href="/barangay_file_report_view" class="sidebar-item"> <i class="bi bi-file-earmark-text"></i> <span>File Report</span></a>
+        <a href="/barangay_details_view" class="sidebar-item active"> <i class="bi bi-building"></i> <span>Barangay Details</span></a>
+        <a href="/BarangayReportLog" class="sidebar-item"> <i class="bi bi-journal-text"></i> <span>Report Log</span></a>
+   </div>
+   <form id="barangayForm" method="POST">
+        {% csrf_token %}
+        
+        <div id="content">
+            <div class="row">
+                <h2 class="mb-4">Barangay Details</h2>
+                <div class="row">
+                    <div class="col-12 col-md-3 mt-3">
+                        <label for="brgyName">Barangay Name</label>
+                        <input type="text" class="form-control custom-input3" placeholder="Enter Barangay Name" id="brgyName" name="brgyName">
+                    </div>
+                    <div class="col-12 col-md-3 mt-3">
+                        <label for="femalePopulation">Female Population</label>
+                        <input type="number" class="form-control custom-input2" placeholder="Female Population" id="femalePopulation" name="femalePopulation" min="0">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 col-md-3 mt-3">
+                        <label for="brgyCaptain">Barangay Captain</label>
+                        <input type="text" class="form-control custom-input3" placeholder="Enter Barangay Captain" id="brgyCaptain" name="brgyCaptain">
+                    </div>
+                    <div class="col-12 col-md-3 mt-3">
+                        <label for="malePopulation">Male Population</label>
+                        <input type="number" class="form-control custom-input2" placeholder="Male Population" id="malePopulation" name="malePopulation" min="0">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 col-md-3 mt-3">
+                        <label for="populationTotal">Population (Total)</label>
+                        <input type="text" class="form-control custom-input3" placeholder="Enter Barangay Population" id="populationTotal" name="populationTotal">
+                    </div>
+                </div>
+                
+
+                <div class="container">
+                    <h4 class="mt-5 mb-4">Age Groups</h4>
+                    <div class="row age-groups-container">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="age0-5" class="me-2 w-50 text-end"><b>YOUNG DEPENDENTS</b></label>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age0-5">0-5 years old:</label>
+                                    <span class="d-block">(Toddler)</span>
+                                </div>
+                                <input type="number" id="age0-5" class="form-control custom-input ms-2" name="age0-5" min="0">
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age6-12">6-12 years old:</label>
+                                    <span class="d-block">(Child)</span>
+                                </div>
+                                <input type="number" id="age6-12" class="form-control custom-input ms-2" name="age6-12" min="0">
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age13-17">13-17 years old:</label>
+                                    <span class="d-block">(Teenager)</span>
+                                </div>
+                                <input type="number" id="age13-17" class="form-control custom-input ms-2" name="age13-17" min="0">
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="age0-5" class="me-2 w-50 text-end"><b>WORKING AGE</b></label>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age18-30">18-30 years old:</label>
+                                    <span class="d-block">(Young Adult)</span>
+                                </div>
+                                <input type="number" id="age18-30" class="form-control custom-input ms-2" name="age18-30" min="0">
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age31-45">31-45 years old:</label>
+                                    <span class="d-block">(Middle-aged)</span>
+                                </div>
+                                <input type="number" id="age31-45" class="form-control custom-input ms-2" name="age31-45" min="0">
+                            </div>
+                            
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age46-60">46-60 years old:</label>
+                                    <span class="d-block">(Senior)</span>
+                                </div>
+                                <input type="number" id="age46-60" class="form-control custom-input ms-2" name="age46-60" min="0">
+                            </div>
+                            
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="age0-5" class="me-2 w-50 text-end"><b>OLD DEPENDENTS</b></label>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="w-50 text-end">
+                                    <label for="age60plus">60+ years old:</label>
+                                    <span class="d-block">(Elderly)</span>
+                                </div>
+                                <input type="number" id="age60plus" class="form-control custom-input ms-2" name="age60plus" min="0">
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <h4 class="mt-5">Person with Special Needs (PWSN)</h4>
+                    <div class="row pwsnrowing">
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="pwd" class="me-2">Person with Disabilities:</label>
+                                <input type="number" id="pwd" class="form-control custom-input w-50" name="pwd" min="0">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="seniorAssistance" class="me-2">Senior Citizens in Need of Assistance:</label>
+                                <input type="number" id="seniorAssistance" class="form-control custom-input w-50" name="seniorAssistance" min="0">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="indigent" class="me-2">Indigent Individuals:</label>
+                                <input type="number" id="indigent" class="form-control custom-input w-50" name="indigent" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <h4 class="mt-5 mb-4">Pregnant Women</h4>
+                    <div class="row pregyrowing">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="totalPregnant" class="text-center m-0">Total Number of Pregnant Women:</label>
+                                <input type="number" id="totalPregnant" class="form-control custom-input ms-2" name="totalPregnant" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <label for="highRiskPregnant" class="text-center m-0">High-Risk Pregnancies:</label>
+                                <input type="number" id="highRiskPregnant" class="form-control custom-input ms-2" name="highRiskPregnant" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12 text-end">
+                            <div class="d-inline-flex gap-3" style="width: 25%;">
+                                <button type="reset" class="btn btn-danger w-50 custom-margin">Reset</button>
+                                <button type="submit" class="btn btn-primary w-50">Save & Update</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            let sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            let toggleButton = document.getElementById('toggleSidebar');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleButton.style.right = '-8px';  // Moves burger when collapsed
+            } else {
+                toggleButton.style.right = '-10px';  // Moves burger when expanded
+            }
+        });
+    </script>
+
+{% endblock %}

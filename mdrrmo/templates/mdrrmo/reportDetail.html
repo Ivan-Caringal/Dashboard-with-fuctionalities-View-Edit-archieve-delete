@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %} CBMMS 2.0 - Reports {% endblock %}
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+    #sidebar {
+        min-width: 250px;
+        max-width: 250px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #0d6efd;
+        color: white;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+    #sidebar.collapsed {
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .sidebar-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        padding-left: 30px;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+        background: white;
+        color: #0d6efd;
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .sidebar-item i {
+        margin-right: 10px;
+    }
+    #sidebar.collapsed .sidebar-item span {
+        display: none;
+    }
+    #logo {
+        width: 100px;
+        margin: 20px 0;
+        transition: all 0.3s;
+        padding-top: 50px;
+    }
+    #sidebar.collapsed #logo {
+        width: 50px;
+    }
+    #toggleSidebar {
+        position: absolute;
+        right: 5px;
+        color: white;
+        background-color: #0d6efd;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+    }
+    #homeIcon {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        color: white;
+        font-size: 20px;
+        text-decoration: none;
+        padding-left: 20px;
+    }
+    #content {
+        flex-grow: 1;
+        padding: 80px;
+        overflow-y: auto;
+        height: 100vh;
+        position: relative;
+    }
+    #map {
+        width: 100%;
+        max-width: 1100px;
+        height: 400px;
+        margin: auto;
+        border-radius: 10px;
+    }
+
+    .btn-stack {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    
+
+    .overlay-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    .approve-btn, .disapprove-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+    .approve-btn {
+        background: #007bff;
+        color: white;
+    }
+    .disapprove-btn {
+        background-color: #dc3545;
+        color: white;
+    }
+    .approve-btn:hover, .disapprove-btn:hover {
+        opacity: 0.8;
+    }
+</style>
+
+<div id="sidebar" class="d-flex flex-column">
+    <a href="{% url 'mdrrmolandingpage' %}" id="homeIcon" class="bi bi-house-door"></a>
+    <button class="btn btn-light m-3" id="toggleSidebar">☰</button>
+    <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" id="logo">
+    <a href="#" class="sidebar-item"> <i class="bi bi-house-door"></i> <span>Dashboard</span></a>
+    <a href="#" class="sidebar-item"> <i class="bi bi-clipboard-data"></i> <span>Monitoring</span></a>
+    <a href="#" class="sidebar-item"> <i class="bi bi-map"></i> <span>GIS Map</span></a>
+    <a href="{% url 'cms' %}" class="sidebar-item"> <i class="bi bi-file-earmark-richtext"></i> <span>CMS</span></a>
+    <a href="{% url 'report' %}" class="sidebar-item active"> <i class="bi bi-graph-up-arrow"></i> <span>Reports</span></a>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+<div  >
+    <div class="overlay-content" onclick="event.stopPropagation();">
+        <h3>Report ID: {{single_report.id}}</h3> 
+        <p><strong>Reporter Name:</strong> {{single_report.user}}</p>
+    
+        <p><strong>Resident Name:</strong> {{single_report.resident_name}}</p>
+        <p><strong>Barangay Street:</strong> {{single_report.barangay_street}}</p>
+        <p><strong>Severity Level:</strong> {{single_report.severity_level}}</p>
+        <p><strong>Date and Time of Incident:</strong> {{ single_report.incident_day }}, {{ single_report.incident_month }}, {{ single_report.incident_year }}, {{ single_report.incident_time }}</p>
+        <p><strong>Description:</strong> {{single_report.incident_description}}</p>
+        <p><strong>Incident Type:</strong>{{single_report.incident_type}}</p>
+        <p><strong>Attachments:</strong> {{single_report.attachments}}</p>
+
+        <div class="d-none">
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" class="form-control w-100" name="latitude" value="{{single_report.latitude}}" readonly>
+
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" class="form-control w-100" name="longitude" value="{{single_report.longitude}}" readonly>
+        </div>
+
+
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+
+        <form method="POST" action="{% url 'report_detail' single_report.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve" class="approve-btn">Approve</button>
+            <button type="submit" name="action" value="disapprove" class="disapprove-btn">Disapprove</button>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+        let sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    });
+
+    function approveReport() {
+        alert("Report Approved!");
+    }
+
+    function disapproveReport() {
+        alert("Report Disapproved!");
+    }
+
+    function hideOverlay() {
+        document.getElementById('overlay').style.display = 'none';
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+       var map = L.map('map').setView([13.7507, 120.9389], 13); // Mabini, Batangas
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([{{single_report.latitude}}, {{single_report.longitude}}]).addTo(map)
+        .bindPopup('Reporter: {{ single_report.resident_name }}<br>Incident Type: {{ single_report.incident_type }}')
+        .openPopup();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

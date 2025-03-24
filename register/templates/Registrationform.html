@@ -1,0 +1,153 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="icon" href="{% static 'images/mabinilogo.png' %}" />
+    <title>Registeration</title>
+
+    <style>
+      .navbar .btn-outline-light:hover {
+        color: #000000;
+      }
+      body {
+        background: url("{% static 'images/pio.jpg' %}") center top no-repeat;
+        background-size: 100% 60%;
+        
+        min-height: 60%;
+        margin: 0;
+        padding-top: 0;
+        height: 100vh; /* Full viewport height */
+        
+        
+      }
+
+      @media (max-width: 768px) {
+        body {
+          background-size: 100% 50vh;
+        }
+
+        .nav-link {
+          color: #000;
+          background-color: #f0f0f0;
+          padding: 5px 10px;
+          border-radius: 4px;
+        }
+      }
+
+      .card-overlay {
+        width: 100%;
+        max-width: 450px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg  navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html">
+          <img src="{% static 'images/mabinilogo.png' %}" alt="Logo" width="48" height="48" />
+          <span class="fw-semibold">Welcome to CBMMS 2.0</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="about.html">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="hero text-white pt-5 border border-dark">
+        <div class="container d-flex justify-content-center align-items-center border border-primary mb-3" style="min-height: 80vh;">
+          <!-- Card overlay -->
+          <div class="card card-overlay rounded-5 shadow-lg border-0 p-3 ">
+            <div class="card-body border border-primary">
+              <h1 class="text-start text-dark">Registration</h1>
+              <hr class="my-4 border-dark" style="border-width: 3px;">
+              <p class="text-start text-secondary">Barangay Officials</p>
+              <p class="text-start text-dark">Please enter your credentials to sign in.</p>
+              <form method="POST" class="form-group">
+                {% csrf_token %}
+          
+              {% for field in form %}
+                  <div class="mb-0">
+                      {{ field.label_tag }}
+                      <p class="text-muted small">{{ field.help_text }}</p>
+                      {{ field }}
+                      {% if field.errors %}
+                          <div class="text-danger">
+                              {{ field.errors|striptags }}
+                          </div>
+                      {% endif %}
+                  </div>
+              {% endfor %}
+              
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary rounded-5 mt-3">Register</button>
+              </div>
+            
+                
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>
+
+
+
+
+
+<!-- confirtm password logic
+<script>
+  const password = document.getElementById('password');
+  const confirmPassword = document.getElementById('confirmPassword');
+
+  confirmPassword.addEventListener('input', function () {
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.setCustomValidity("Passwords do not match");
+    } else {
+      confirmPassword.setCustomValidity("");
+    }
+  });
+</script> -->
+
